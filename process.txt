@@ -1,0 +1,5 @@
+Queue
+=====
+
+- Make deletePlaylist working -> Error "404" for no reason.
+- MakeCall working for all requests

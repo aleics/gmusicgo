@@ -1,0 +1,88 @@
+package stream
+
+import(
+		"fmt"
+		"net/http"
+//		"net/http/cookiejar"
+		"net/url"
+		"io/ioutil"
+//		"strings"
+//		"encoding/json"
+		"os"
+//	        "time"
+	        "reflect"
+)
+
+type Stream struct{
+		streamUrl string
+		audioFile string
+}
+func Init() *Stream{
+	s := new(Stream)
+	return s
+}
+func (s Stream) StreamUrl() string{
+	return s.streamUrl
+}
+func (s Stream) AudioFile() string{
+	return s.audioFile
+}
+func (s *Stream) SetStreamUrl(streamUrl string) {
+	s.streamUrl = streamUrl
+}
+func (s *Stream) SetAudioFile(audioFile string) {
+	s.audioFile = audioFile 
+}
+func (s *Stream) StreamUrlRequest(auth string, sjsaid string, xt string, songid string) string {
+
+	hostname := "https://play.google.com"
+	resource := "/music/play?u=0&songid=" + songid + "&pt=e"
+	
+	u, _ := url.ParseRequestURI(hostname)
+	u.Path = resource
+	urlStr := fmt.Sprintf("%v",u)
+	
+	urlStr = hostname + resource
+	
+	cl := &http.Client{}
+	
+	r, err := http.NewRequest("GET", urlStr, nil)
+	if err != nil {
+		return "404 REQUEST ERROR"
+	}
+	
+	auth_header := "GoogleLogin auth=" + auth
+	
+	r.Header.Add("Authorization", auth_header)
+
+//	expire := time.Now().AddDate(0, 0, 1)
+//	cookie := http.Cookie{"sjsaid", sjsaid, "/", "music.google.com", expire, expire.Format(time.UnixDate), 0, true, true, "sjsaid=sjsaidtoken", []string{"sjsaid=sjsaidtoken"}}
+//	r.AddCookie(&cookie)
+//	cookie = http.Cookie{"xt", xt, "/", "music.google.com", expire, expire.Format(time.UnixDate), 0, true, true, "xt=xttoken", []string{"xt=xttoken"}}
+//	r.AddCookie(&cookie)
+
+	
+
+	resp, err := cl.Do(r)
+        if err != nil {
+                os.Exit(1)
+        }
+
+        defer resp.Body.Close()
+
+        b, err := ioutil.ReadAll(resp.Body) //Get the body of the response                                                              
+                                                                                                                                         
+        if err != nil { //Error management                                                                                              
+                                                                                                                                         
+                os.Exit(1)
+        }
+
+	
+	fmt.Println(reflect.TypeOf(b))
+	fmt.Println(resp)
+	fmt.Println(b)
+//	for _, element := range b {
+//		fmt.Println(element)
+//	}
+	return "test"
+}
