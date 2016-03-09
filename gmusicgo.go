@@ -1,26 +1,27 @@
 package gmusicgo
 
-import(
-	"os"
+import (
 	"errors"
 	"github.com/aleics/gmusicgo/lib/clientlogin"
-	"github.com/aleics/gmusicgo/lib/tokens"
-	"github.com/aleics/gmusicgo/lib/track"
+	"github.com/aleics/gmusicgo/lib/gmusicjson"
 	"github.com/aleics/gmusicgo/lib/playlist"
 	"github.com/aleics/gmusicgo/lib/plentry"
 	"github.com/aleics/gmusicgo/lib/stream"
-	"github.com/aleics/gmusicgo/lib/gmusicjson"
+	"github.com/aleics/gmusicgo/lib/tokens"
+	"github.com/aleics/gmusicgo/lib/track"
+	"os"
 )
 
-type Gmusicgo struct{
-	gclient clientlogin.Clientlogin
-	gtokens tokens.Tokens
-	gtracks []track.Track
+type Gmusicgo struct {
+	gclient    clientlogin.Clientlogin
+	gtokens    tokens.Tokens
+	gtracks    []track.Track
 	gplaylists []playlist.Playlist
 	gplentries []plentry.Plentry
-	gstream stream.Stream
+	gstream    stream.Stream
 }
-func Init() *Gmusicgo{
+
+func Init() *Gmusicgo {
 	gmusic := new(Gmusicgo)
 	gmusic.gclient = *clientlogin.Init()
 	gmusic.gtokens = *tokens.Init()
@@ -30,53 +31,53 @@ func Init() *Gmusicgo{
 	gmusic.gstream = *stream.Init()
 	return gmusic
 }
-func (g Gmusicgo) GetGmusicgo() Gmusicgo{
-        return g
+func (g Gmusicgo) GetGmusicgo() Gmusicgo {
+	return g
 }
 func (g Gmusicgo) SetGmusicgo(gm Gmusicgo) {
-        g = gm
+	g = gm
 }
 func (g Gmusicgo) GetGclient() clientlogin.Clientlogin {
-        return g.gclient
+	return g.gclient
 }
 func (g *Gmusicgo) SetGclient(gc clientlogin.Clientlogin) {
-        g.gclient = gc
+	g.gclient = gc
 }
 func (g Gmusicgo) GetGtokens() tokens.Tokens {
-        return g.gtokens
+	return g.gtokens
 }
 func (g *Gmusicgo) SetGtokens(gt tokens.Tokens) {
-        g.gtokens = gt
+	g.gtokens = gt
 }
 func (g Gmusicgo) GetGtracks() []track.Track {
-        return g.gtracks
+	return g.gtracks
 }
 func (g *Gmusicgo) SetGtracks(gtr []track.Track) {
-        g.gtracks = gtr
+	g.gtracks = gtr
 }
 func (g Gmusicgo) GetGplaylists() []playlist.Playlist {
-        return g.gplaylists
+	return g.gplaylists
 }
 func (g *Gmusicgo) SetGplaylists(gpla []playlist.Playlist) {
-        g.gplaylists = gpla
+	g.gplaylists = gpla
 }
 func (g Gmusicgo) GetGplentries() []plentry.Plentry {
-        return g.gplentries
+	return g.gplentries
 }
 func (g *Gmusicgo) SetGplentries(gple []plentry.Plentry) {
-        g.gplentries = gple
+	g.gplentries = gple
 }
 
-func (g *Gmusicgo) Connect(accountType string, email string, passwd string, service string, source string, path string) error{
+func (g *Gmusicgo) Connect(accountType string, email string, passwd string, service string, source string, path string) error {
 
-	header := [5]string{accountType, email, passwd, service, source} 
+	header := [5]string{accountType, email, passwd, service, source}
 	g.gclient.SetHeader(accountType, email, passwd, service, source)
 
-	if g.gclient.MakeRequest(header)[0] != "200 OK"{
+	if g.gclient.MakeRequest(header)[0] != "200 OK" {
 		return errors.New("Error clientlogin request")
 		os.Exit(1)
 	}
-	
+
 	if g.gtokens.MakeRequest(g.gclient.GetAuth())[0] != "200 OK" {
 		return errors.New("Error tokens request")
 		os.Exit(1)
@@ -103,36 +104,36 @@ func (g *Gmusicgo) Connect(accountType string, email string, passwd string, serv
 	if g.gplentries[0].GetId() == "" {
 		return errors.New("Error plentry request")
 		os.Exit(1)
-	} 
+	}
 
 	return nil
 }
-func (g *Gmusicgo) Update(path string) error{
-	
+func (g *Gmusicgo) Update(path string) error {
+
 	if path != "" {
-                g.gclient.SaveInfo(path)
-                g.gtokens.SaveInfo(path)
-        }
+		g.gclient.SaveInfo(path)
+		g.gtokens.SaveInfo(path)
+	}
 
-        g.gtracks = track.TracksRequest(g.gclient.GetAuth(), path)
-        if g.gtracks[0].GetId() == "" {
-                return errors.New("Error track request")
-                os.Exit(1)
-        }
+	g.gtracks = track.TracksRequest(g.gclient.GetAuth(), path)
+	if g.gtracks[0].GetId() == "" {
+		return errors.New("Error track request")
+		os.Exit(1)
+	}
 
-        g.gplaylists = playlist.PlaylistsRequest(g.gclient.GetAuth(), path)
-        if g.gplaylists[0].GetId() == "" {
-                return errors.New("Error playlist request")
-                os.Exit(1)
-        }
+	g.gplaylists = playlist.PlaylistsRequest(g.gclient.GetAuth(), path)
+	if g.gplaylists[0].GetId() == "" {
+		return errors.New("Error playlist request")
+		os.Exit(1)
+	}
 
-        g.gplentries = plentry.PlentryRequest(g.gclient.GetAuth(), path)
-        if g.gplentries[0].GetId() == "" {
-                return errors.New("Error plentry request")
-                os.Exit(1)
-        }
+	g.gplentries = plentry.PlentryRequest(g.gclient.GetAuth(), path)
+	if g.gplentries[0].GetId() == "" {
+		return errors.New("Error plentry request")
+		os.Exit(1)
+	}
 
-        return nil
+	return nil
 }
 func (g Gmusicgo) TracksToMap() ([]map[string]string, error) {
 	thisMap := make([]map[string]string, 0)
@@ -165,14 +166,14 @@ func (g Gmusicgo) PlentriesToMap() ([]map[string]string, error) {
 	return thisMap, nil
 }
 
-func (g *Gmusicgo) GetSong(songid string, path string) error{
+func (g *Gmusicgo) GetSong(songid string, path string) error {
 	err := g.gstream.StreamRequest(g.gclient.GetAuth(), g.gtokens.GetXt(), songid, path)
 	if err != nil {
 		return errors.New("Error stream request")
 	}
 	return nil
 }
-func (g *Gmusicgo) CreatePlaylist(name string, description string, public bool) error{
+func (g *Gmusicgo) CreatePlaylist(name string, description string, public bool) error {
 	err := g.gplaylists[0].CreatePlaylist(g.gclient.GetAuth(), g.gtokens.GetXt(), name, description, public)
 	if err != true {
 		return errors.New("Error creating playlist: " + name)
@@ -180,7 +181,7 @@ func (g *Gmusicgo) CreatePlaylist(name string, description string, public bool) 
 	return nil
 }
 
-func (g *Gmusicgo) LoadUserPlaylist() error{
+func (g *Gmusicgo) LoadUserPlaylist() error {
 	err := g.gplaylists[0].LoadUserPlaylist(g.gclient.GetAuth(), g.gtokens.GetXt())
 	if err != true {
 		return errors.New("Error loading playlists")
@@ -188,7 +189,7 @@ func (g *Gmusicgo) LoadUserPlaylist() error{
 	return nil
 }
 
-func (g *Gmusicgo) DeletePlaylist(id string) error{
+func (g *Gmusicgo) DeletePlaylist(id string) error {
 	err := g.gplaylists[0].DeletePlaylist(g.gclient.GetAuth(), g.gtokens.GetXt(), id)
 	if err != true {
 		return errors.New("Error deleting playlist: " + id)
@@ -203,9 +204,9 @@ func (g Gmusicgo) GetIdBySongTitle(songname string) (string, error) {
 		}
 	}
 	return "", errors.New("Song name not found")
-	
+
 }
-func (g Gmusicgo) GetIdsByArtist(artistname string) ([]string, error){
+func (g Gmusicgo) GetIdsByArtist(artistname string) ([]string, error) {
 	out := make([]string, 0)
 	for i := 0; i < len(g.gtracks); i++ {
 		if g.gtracks[i].GetArtist() == artistname {
@@ -218,7 +219,7 @@ func (g Gmusicgo) GetIdsByArtist(artistname string) ([]string, error){
 	}
 	return out, nil
 }
-func (g Gmusicgo) GetIdsByAlbum(albumname string) ([]string, error){
+func (g Gmusicgo) GetIdsByAlbum(albumname string) ([]string, error) {
 	out := make([]string, 0)
 	for i := 0; i < len(g.gtracks); i++ {
 		if g.gtracks[i].GetAlbum() == albumname {
@@ -232,14 +233,14 @@ func (g Gmusicgo) GetIdsByAlbum(albumname string) ([]string, error){
 
 	return out, nil
 }
-func (g Gmusicgo) GetIdsByPlaylist(playlistname string) ([]string, error){
+func (g Gmusicgo) GetIdsByPlaylist(playlistname string) ([]string, error) {
 	pla_id := ""
 	for i := 0; i < len(g.gplaylists); i++ {
 		if g.gplaylists[i].GetName() == playlistname {
 			pla_id = g.gplaylists[i].GetId()
 		}
 	}
-	
+
 	out := make([]string, 0)
 	for i := 0; i < len(g.gplentries); i++ {
 		if g.gplentries[i].GetPlaylistId() == pla_id {
@@ -254,51 +255,51 @@ func (g Gmusicgo) GetIdsByPlaylist(playlistname string) ([]string, error){
 	return out, nil
 }
 
-func (g Gmusicgo) Export(path string) error{
-	_, err := gmusicjson.Export(g.gclient, path + "userinfo.json")
+func (g Gmusicgo) Export(path string) error {
+	_, err := gmusicjson.Export(g.gclient, path+"userinfo.json")
 	if err != nil {
 		return errors.New("Error exporting User Info")
 	}
-	_, err = gmusicjson.Export(g.gtokens, path + "tokens.json")
+	_, err = gmusicjson.Export(g.gtokens, path+"tokens.json")
 	if err != nil {
 		return errors.New("Error exporting Tokens")
 	}
-	_, err = gmusicjson.Export(g.gtracks, path + "tracks.json")
+	_, err = gmusicjson.Export(g.gtracks, path+"tracks.json")
 	if err != nil {
 		return errors.New("Error exporting Tracks")
 	}
-	_, err = gmusicjson.Export(g.gplaylists, path + "playlists.json")
+	_, err = gmusicjson.Export(g.gplaylists, path+"playlists.json")
 	if err != nil {
 		return errors.New("Error exporting Playlists")
 	}
-	_, err = gmusicjson.Export(g.gplentries, path + "plentries.json")
+	_, err = gmusicjson.Export(g.gplentries, path+"plentries.json")
 	if err != nil {
 		return errors.New("Error exporting Plentries")
 	}
 	return nil
 }
 
-func (g *Gmusicgo) Import(path string) error{
-	err := gmusicjson.Import(path + "userinfo.json", &g.gclient)
-        if err != nil {
-                return errors.New("Error importing User Info")
-        }
-	err = gmusicjson.Import(path + "tokens.json", &g.gtokens)
-        if err != nil {
-                return errors.New("Error importing Tokens")
-        }
-	err = gmusicjson.Import(path + "tracks.json", &g.gtracks)
-        if err != nil {
-                return errors.New("Error importing Tracks")
-        }
-	err = gmusicjson.Import(path + "playlists.json", &g.gplaylists)
-        if err != nil {
-                return errors.New("Error importing Playlists")
-        }
-	err = gmusicjson.Import(path + "plentries.json", &g.gplentries)
-        if err != nil {
-                return errors.New("Error importing Plentries")
-        }
-	
-	return nil 	
+func (g *Gmusicgo) Import(path string) error {
+	err := gmusicjson.Import(path+"userinfo.json", &g.gclient)
+	if err != nil {
+		return errors.New("Error importing User Info")
+	}
+	err = gmusicjson.Import(path+"tokens.json", &g.gtokens)
+	if err != nil {
+		return errors.New("Error importing Tokens")
+	}
+	err = gmusicjson.Import(path+"tracks.json", &g.gtracks)
+	if err != nil {
+		return errors.New("Error importing Tracks")
+	}
+	err = gmusicjson.Import(path+"playlists.json", &g.gplaylists)
+	if err != nil {
+		return errors.New("Error importing Playlists")
+	}
+	err = gmusicjson.Import(path+"plentries.json", &g.gplentries)
+	if err != nil {
+		return errors.New("Error importing Plentries")
+	}
+
+	return nil
 }

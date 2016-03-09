@@ -1,12 +1,12 @@
 package main
 
-import(
+import (
 	"fmt"
-	"os"
 	"github.com/aleics/gmusicgo"
+	"os"
 )
 
-func main(){
+func main() {
 	gmusic := gmusicgo.Init()
 	path := "/home/aleix/gmusic/"
 
@@ -32,12 +32,12 @@ func main(){
 		os.Exit(1)
 	}
 
-	err = gmusic.Connect(header[0],header[1],header[2],header[3],header[4], path)
+	err = gmusic.Connect(header[0], header[1], header[2], header[3], header[4], path)
 	if err != nil {
 		fmt.Println("Couldn't connect with Gmusic")
 	}
 
-	err = gmusic.GetSong("b7e5d43b-0293-3020-8277-a686bd394eec", path + "songs/")
+	err = gmusic.GetSong("b7e5d43b-0293-3020-8277-a686bd394eec", path+"songs/")
 	if err != nil {
 		fmt.Println("Couldn't get the song")
 	}
@@ -56,7 +56,6 @@ func main(){
 
 	_ = gmusic.LoadUserPlaylist()
 
-	
 	//_ = gmusic.DeletePlaylist("")
 }
 
@@ -104,7 +103,7 @@ func main(){
 	client.SetHeader(header[0],header[1],header[2],header[3],header[4])
 
 	value := client.MakeRequest(client.Header())
-	
+
 
 	if value[0] == "200 OK"{
 		fmt.Println("AUTHORIZATION")
@@ -122,9 +121,9 @@ func main(){
 	fmt.Println("")
 	fmt.Println("----------------------------------------------------------------------------------------------------")
 	fmt.Println("")
-	
+
 	tokenvalues := tokens.Init()
-	
+
 	value2 := tokenvalues.MakeRequest(client.Auth())
 
 	if value2[0] == "200 OK"{
@@ -146,7 +145,7 @@ func main(){
         fmt.Println("")
 
 	track := track.Init()
-	
+
 	tracks := track.TracksRequest(client.Auth(), path)
 	if tracks[0].Id() != "" {
 		fmt.Println("TRACKS")
@@ -164,7 +163,7 @@ func main(){
 
 
 	playlist := playlist.Init()
-	
+
 	playlists := playlist.PlaylistsRequest(client.Auth(), path)
 	if playlists[0].Id() != "" {
 		fmt.Println("PLAYLISTS")
@@ -206,7 +205,7 @@ func main(){
 		fmt.Println("Good Request")
 		fmt.Println("Stream saved on: " + path)
 	} else {fmt.Println("Error saving Stream")}
-	
+
 	fmt.Println("")
         fmt.Println("-----------------------------------------------------------------------------------------------------")
 }*/
