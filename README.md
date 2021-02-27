@@ -1,10 +1,11 @@
-gmusicgo
-================
-Gmusicgo is a [Google Music](https://music.google.com) API writed in [Go](http://golang.org/).
+# gmusicgo
+## Disclaimer
+The Google Play Music has been [deprecated](https://blog.youtube/news-and-events/youtube-music-will-replace-google-play-music-end-2020/).
 
-For details of the implementation, read the documentation of my other repository [here](https://github.com/aleics/Google-Play-Music-for-TV-Interface).
+## Description
 
-ClientLogin not more available (need some time to make code working).
+Gmusicgo is a [Google Music](https://music.google.com) API written in [Go](http://golang.org/).
 
+For details on the ClientLogin authorization, read the documentation of the [original implementation](https://github.com/aleics/Google-Play-Music-for-TV-Interface) in PHP.
 
 
